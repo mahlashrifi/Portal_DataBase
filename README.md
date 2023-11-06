@@ -1,6 +1,6 @@
 ## About
 
-This is the final project of the "Database" course at Amirkabir University of Technology (AUT) in the spring of 2022.
+This repository is for the 'Database' course at Amirkabir University of Technology (AUT), completed in the Spring of 2022
 
 Project contains the SQL queries for designing student portal database 
 
