@@ -1,0 +1,26 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_hw_info`(
+  IN course_id    varchar(50),
+  IN title        varchar(50),
+  IN dead_line    datetime
+)
+BEGIN
+	declare flag integer;
+    set flag = (select portal.specify_role(user_id, course_id));
+    
+	IF ( flag = 0) THEN
+		    SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'Course does not exist!';
+            
+    elseIF (falg = 3 or flag = 4) THEN
+		    SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'You do not have permision to delare exerxise';   
+	else
+		begin
+		    DECLARE hid integer;
+			set hid = (select COALESCE(max(hw_id),0) from hw_info hi where hi.course_id = course_id)+1;
+			INSERT INTO hw_info(course_id, hw_id, title, dead_line)
+			VALUES (course_id, hid, title, dead_line);
+        end;    
+          
+	END IF;
+END

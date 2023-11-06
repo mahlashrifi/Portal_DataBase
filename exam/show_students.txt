@@ -1,0 +1,25 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `show_students_of_course`(
+	IN user_name varchar(50),
+    IN course_id varchar(50)
+)
+BEGIN
+    if (not exists (select * from course c where c.course_id = course_id)) then
+    SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'Course does not exist!';
+            
+    elseif (not user_name in (select c.professor_no  from course c where c.course_id = course_id)
+		and not user_name in (select student_no from classroom cl 
+        where cl.course_id = course_id and stu_role = 'ta')
+        ) then
+		SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'You do not have permision to see student information because you are not professor or TA of this course!';
+            
+	else
+		select s.student_no, s.name_fa 
+		from student s where s.student_no in 
+        (select cl.student_no from classroom cl 
+		 where cl.course_id = course_id
+         and cl.stu_role = 'student');
+    end if;    
+	
+END

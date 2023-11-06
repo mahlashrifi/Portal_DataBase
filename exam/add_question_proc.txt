@@ -1,0 +1,29 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_question`(
+	 IN course_id    varchar(50),
+	 IN text         varchar(512),
+     IN option1      varchar(50),
+     IN option2      varchar(50),
+     IN option3      varchar(50),
+     IN option4      varchar(50),
+     IN corr_option  integer
+)
+BEGIN
+		IF not exists (select * from course c where c.course_id = course_id) THEN
+			SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'Course does not exist!';
+            
+        else
+        begin
+			DECLARE qid integer;
+			set qid = (select COALESCE(max(id),0) from question q where q.course_id = course_id)+1;
+			INSERT INTO question (course_id, id, text, option1, option2, option3, option4, corr_option)
+			VALUES (course_id, qid, text, option1, option2, option3, option4, corr_option);
+		end;
+        end if;
+END
+
+
+#####################for_test
+call portal.add_question( '12000001', "This is question text", 'o1', 'o2', 'o3', 'o4', 3);
+call portal.add_question( '12000001', "what is this", 'o1', 'o2', 'o3', 'o4', 3);
+select * from question

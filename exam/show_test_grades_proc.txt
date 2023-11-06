@@ -1,0 +1,16 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `show_tset_grades`(
+	 IN course_id   integer,
+	 IN test_id     integer)
+BEGIN
+
+	WITH grades as (
+     select student_no as stu_no, sum(mark) as total from test_answer ta where
+     ta.course_id = course_id and ta.test_id = test_id  group by student_no)
+	 select classroom.student_no, IFNULL(grades.total, 0)
+     from classroom 
+     left join grades 
+     on classroom.student_no = grades.stu_no
+     where classroom.course_id = course_id;
+     
+     
+END

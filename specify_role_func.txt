@@ -1,0 +1,27 @@
+CREATE DEFINER=`root`@`localhost` FUNCTION `specify_role`(
+	user_name varchar(50),
+    course_id varchar(50) 
+) RETURNS int
+    DETERMINISTIC
+BEGIN
+
+		if (not exists (select * from course c where c.course_id = course_id)) then
+			return 0;
+            
+		elseIF user_name in (select c.professor_no  from course c where c.course_id = course_id) then 
+		    return 1;
+            
+        elseIF user_name in (select student_no from classroom cl 
+			where cl.course_id = course_id and stu_role = 'ta') then 
+		    return 2; 
+            
+		elseIF user_name in (select student_no from classroom cl 
+			where cl.course_id = course_id and stu_role = 'student') then 
+		    return 3;
+        else    
+        return 4;        
+                
+   END IF;
+
+        
+END

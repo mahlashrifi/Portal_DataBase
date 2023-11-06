@@ -1,0 +1,65 @@
+CREATE TABLE iF NOT EXISTS test_info(
+  course_id    integer,
+  test_id      integer,
+  title        varchar(50),
+  start_time   datetime,
+  end_time     datetime,
+  time_period  integer        ,
+  PRIMARY key (course_id, test_id),
+  FOREIGN KEY (course_id) REFERENCES course(course_id)
+);
+
+CREATE TABLE iF NOT EXISTS question(
+  course_id    integer,
+  id           integer,
+  text         varchar(50),
+  option1      varchar(50),
+  option2      varchar(50),
+  option3      varchar(50),
+  option4      varchar(50),
+  corr_option  integer,
+  PRIMARY key (id),
+  FOREIGN KEY (course_id) REFERENCES course(course_id),
+  check (corr_option in (0,1, 2, 3))
+);
+
+CREATE TABLE iF NOT EXISTS test(
+  course_id    integer,
+  test_id      integer,
+  q_num        integer,
+  question_id  integer,
+  PRIMARY key (course_id, test_id, q_num),
+  FOREIGN KEY (course_id, test_id) REFERENCES test_info(course_id, test_id)
+);
+
+CREATE TABLE iF NOT EXISTS test_answer(
+  course_id    integer,
+  test_id      integer,
+  q_num        integer,
+  student_no   integer,
+  ans          integer,
+  mark         integer,
+  PRIMARY key (course_id, test_id, q_num, student_no),
+  FOREIGN KEY (course_id, test_id, q_num) REFERENCES test(course_id, test_id, q_num),
+  FOREIGN KEY (student_no) REFERENCES student(student_no),
+  check (mark in (0,1)),
+  check (ans in (0,1, 2, 3, 4))
+);
+
+##participation start time
+create table participation_start_time(
+  course_id    integer,
+  test_id      integer,
+  student_no   integer,
+  start_t      datetime,
+  PRIMARY key (course_id, test_id, student_no),
+  FOREIGN KEY (course_id, test_id) REFERENCES test_info(course_id, test_id),
+  FOREIGN KEY (student_no) REFERENCES student(student_no)
+);
+
+###########################for_test
+drop table test_info;
+drop table test_answer;
+drop table question;
+drop table test;
+select * from question;

@@ -1,0 +1,19 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `grading`(
+	 IN course_id    integer,
+	 IN test_id      integer
+)
+BEGIN
+	update test_answer A
+    set a.mark = CASE
+    WHEN a.ans in (select q.corr_option from question q, test t
+    where q.course_id = course_id
+    and t.test_id = test_id
+    and t.course_id = course_id
+    and q_num = a.q_num
+    and t.question_id = q.id
+    ) then 1
+    else 0
+    end
+    where a.course_id = course_id and a.test_id = test_id;
+    
+end

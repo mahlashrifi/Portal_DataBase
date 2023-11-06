@@ -1,0 +1,35 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_hw_answer`(
+	 IN course_id   integer,
+     IN hw_id       integer,
+     IN q_num       integer,
+     IN student_no   integer,
+     IN ans          varchar(50),
+     OUT proc_status integer
+)
+BEGIN
+	
+	DECLARE dead_line integer;
+	set dead_line = ( select max(hi.dead_line) from hw_info hi 
+		where hi.course_id = course_id and hi.hw_id = hw_id);
+    
+	IF (now() > dead_line) then
+			SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'Exercise submit time is over!';
+            set proc_status = 0;
+    
+    elseif(q_num = (select max(q_num_in_hw) from hw_q where 
+			hw_q.course_id = course_id and hw_q.hw_id = hw_id)) then
+            update hw_result
+            set submit_time = now()
+            where hw_result.course_id = course_id and hw_result.hw_id = hw_id;
+            
+			INSERT INTO hw_answer(course_id, hw_id, q_num_in_hw, student_no, ans)
+			VALUES (course_id, test_id, q_num, student_no, ans);
+            set proc_status = 1;
+     else
+			INSERT INTO hw_answer(course_id, hw_id, q_num_in_hw, student_no, ans)
+			VALUES (course_id, test_id, q_num, student_no, ans);
+            set proc_status = 1;
+            
+    end if;
+end

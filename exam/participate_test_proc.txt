@@ -1,0 +1,9 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `participate_test`(
+	 IN course_id    integer,
+     IN test_id      integer,
+     IN student_no   integer
+)
+BEGIN
+		INSERT INTO participation_start_time(course_id, test_id, student_no, start_t)
+		VALUES (course_id, test_id, student_no, now() );
+END

@@ -1,0 +1,19 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_ta`(
+	 IN course_id   integer,
+	 IN user_id     integer
+)
+BEGIN
+	if (not exists (select * from student s where s.student_no = user_id)) then
+		SIGNAL SQLSTATE '45000' 
+		SET MESSAGE_TEXT = 'Student number is invalid!';
+            
+	elseIF (select portal.specify_role(user_id, course_id) = 3) then
+		SIGNAL SQLSTATE '45000' 
+		SET MESSAGE_TEXT = 'User_id is student of this course, It can not be TA';
+
+    else        
+        INSERT INTO classroom(course_id, student_no, stu_role)
+		VALUES (course_id, user_id, 'ta' );
+        
+    end if;    
+END

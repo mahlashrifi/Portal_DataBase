@@ -1,0 +1,10 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `show_courses`(IN user_name integer)
+BEGIN
+	IF exists (select * from student s where s.student_no = user_name)  THEN
+		select * from course c where
+        c.course_id in ( select course_id from classroom cl where cl.student_no = user_name);
+    else
+		select * from course c where
+         c.professor_no = user_name;
+	END IF;
+END

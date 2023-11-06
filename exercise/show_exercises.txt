@@ -1,0 +1,23 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `show_hw`(
+IN user_name integer,
+IN course_id integer)
+BEGIN
+	declare flag integer;
+    set flag = (select portal.specify_role(user_id, course_id));
+    
+	IF (flag = 2 and flag = 3)  THEN
+		select * from course c where
+        c.course_id in ( select course_id from classroom cl where cl.student_no = user_name);
+    elseif (flag = 1 ) then
+		select * from course c where
+         c.professor_no = user_name;
+         
+    elseif ( flag = 3 ) then
+		    SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'Course does not exist!';
+            
+    else
+		SIGNAL SQLSTATE '45000' 
+		SET MESSAGE_TEXT = 'You does not have permission to see course exercise!';
+	END IF;
+END

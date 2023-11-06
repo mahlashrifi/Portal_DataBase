@@ -1,0 +1,19 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_test_info`(
+  IN course_id    varchar(50),
+  IN title        varchar(50),
+  IN start_time   datetime,
+  IN end_time     datetime,
+  IN time_period  integer )
+BEGIN
+	IF not exists (select * from course c where c.course_id = course_id) THEN
+		    SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'Course does not exist!';
+	else
+		BEGIN
+			DECLARE tid integer;
+			set tid = (select COALESCE(max(test_id),0) from test_info tf where tf.course_id = course_id)+1;
+			INSERT INTO test_info (course_id, test_id, title, start_time, end_time, time_period)
+			VALUES (course_id, tid, title, start_time, end_time, time_period);
+        END ;   
+	END IF;
+END

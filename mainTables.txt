@@ -1,0 +1,59 @@
+##create database portal;
+use portal;
+CREATE TABLE iF NOT EXISTS student (
+  national_code VARCHAR(10),
+  student_no    integer,
+  name_fa       varchar(50),
+  name_en       varchar(50),
+  father_name   varchar(50),
+  birth_date    date,
+  mobile        varchar(50),
+  major         varchar(50),
+  email         varchar(50),
+  PRIMARY key(student_no)
+);
+
+
+CREATE TABLE iF NOT EXISTS faculty (
+  national_code VARCHAR(10),
+  professor_no  integer,
+  name_fa       varchar(50),
+  name_en       varchar(50),
+  father_name   varchar(50),
+  birth_date    date,
+  mobile        varchar(50),
+  department    varchar(50),
+  tilte         VARCHAR(50),
+  email         varchar(50),
+  PRIMARY key(professor_no),
+  check (tilte in ('استاد','دانش‌یار', 'استادیار'))
+);
+
+CREATE TABLE iF NOT EXISTS course (
+  course_id     integer,
+  course_name   varchar(50),
+  professor_no  integer,
+  PRIMARY key(course_id),
+  FOREIGN KEY (professor_no) REFERENCES faculty(professor_no)
+);
+
+
+CREATE TABLE iF NOT EXISTS classroom(
+  course_id        integer,
+  student_no       integer,
+  stu_role     varchar(50),
+  PRIMARY key (course_id, student_no),
+  FOREIGN KEY (course_id) REFERENCES course(course_id),
+  FOREIGN KEY (student_no) REFERENCES student(student_no),
+  check (stu_role in ('ta','student'))
+);
+
+
+################################################################to modify 
+drop table classroom;
+drop table student;
+alter table student 
+ADD email varchar(50);
+alter table faculty 
+ADD email varchar(50);
+select * from faculty;

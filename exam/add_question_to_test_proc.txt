@@ -1,0 +1,12 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_question_to_test`(
+	IN course_id      varchar(50),
+    IN q_id_in_bank   integer,
+    IN test_id        integer)
+BEGIN
+	
+		DECLARE qnum integer;
+		set qnum = (select COALESCE(max(q_num),0) from test t where t.course_id = course_id and t.test_id = test_id)+1;
+		INSERT INTO test (course_id, test_id, q_num, question_id)
+		VALUES (course_id, test_id, qnum, q_id_in_bank);
+	
+END

@@ -1,0 +1,48 @@
+CREATE TABLE iF NOT EXISTS hw_info(
+  course_id    integer,
+  hw_id        integer,
+  title        varchar(50),
+  dead_line    datetime,
+  PRIMARY key (course_id, hw_id),
+  FOREIGN KEY (course_id) REFERENCES course(course_id)
+);
+
+CREATE TABLE iF NOT EXISTS hw_q(
+  course_id    integer,
+  hw_id        integer,
+  q_num_in_hw  integer,
+  text         varchar(512),
+  corr_option  varchar(50),
+  PRIMARY key (course_id, hw_id, q_num_in_hw),
+  FOREIGN KEY (course_id, hw_id) REFERENCES hw_info(course_id, hw_id)
+);
+
+
+CREATE TABLE iF NOT EXISTS hw_answer(
+  course_id    integer,
+  hw_id        integer,
+  q_num_in_hw  integer,
+  student_no   integer,
+  ans          varchar(50),
+  mark         integer,
+  PRIMARY key (course_id, hw_id, q_num_in_hw, student_no),
+  FOREIGN KEY (course_id, hw_id, q_num_in_hw) REFERENCES hw_q(course_id, hw_id, q_num_in_hw),
+  FOREIGN KEY (student_no) REFERENCES student(student_no)
+);
+
+CREATE TABLE iF NOT EXISTS hw_result(
+  course_id    integer,
+  hw_id        integer,
+  student_no   integer,
+  total_score  varchar(50),
+  submit_time  datetime,
+  PRIMARY key (course_id, hw_id,student_no),
+  FOREIGN KEY (course_id, hw_id) REFERENCES hw_info(course_id, hw_id),
+  FOREIGN KEY (student_no) REFERENCES student(student_no)
+);
+
+#############################for_test
+drop table hw_info;
+drop table hw_q;
+drop table hw_answer;
+drop table hw_reslut;

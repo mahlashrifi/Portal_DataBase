@@ -1,0 +1,34 @@
+#initialize table by primary user pass of students
+INSERT INTO user_account(user_name, pass) 
+SELECT s.student_no,
+MD5(CONCAT
+    (national_code,
+    UPPER(LEFT(name_en, 1)),
+    LOWER(LEFT(SUBSTRING_INDEX(name_en, ' - ', -1), 1)))) 
+ FROM student s;
+ 
+ 
+#initialize table by primary user pass of professors
+INSERT INTO user_account(user_name, pass) 
+SELECT f.professor_no,
+MD5(CONCAT
+    (national_code,
+    UPPER(LEFT(name_en, 1)),
+    LOWER(LEFT(SUBSTRING_INDEX(name_en, ' - ', -1), 1)))) 
+ FROM faculty f;
+
+##procedure :
+CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertUserToAccountTable`(
+		IN  user_id	integer,
+        IN  name_en varchar(50),
+        IN  national_code varchar(10)
+)
+BEGIN
+ 
+    ## fcn = firt char of name, fcln = first char of last name
+	DECLARE fcn, fcln varchar(50);
+    set fcn = upper((name_en, 1));
+    set fcln = lower((SUBSTRING_INDEX(name_en, ' - ', -1), 1));
+    INSERT INTO user_account (user_name, pass)
+	VALUES (user_id, MD5(CONCAT(national_code,fcn, fcln)));
+END

@@ -1,0 +1,37 @@
+##create user_account table 
+use portal;
+CREATE TABLE iF NOT EXISTS user_account (
+  user_name     varchar(50),
+  pass   		varchar(50),
+  enter_time    datetime,
+  exit_time     datetime,
+  PRIMARY key(user_name)
+);
+
+
+
+
+
+##create procedure to add student or professor user_name and primary password to user_acount table
+CREATE PROCEDURE InsertUserToAccountTable (
+		IN  user_id	integer,
+        IN  name_en varchar(50),
+        IN  national_code varchar(10)
+)
+BEGIN
+ 
+    ## fcn = firt char of name, fcln = first char of last name
+	DECLARE fcn, fcln varchar(50);
+    set fcn = LEFT(s.name_en, 1);
+    set fcln = LEFT(SUBSTRING_INDEX(s.name_en, ' - ', -1), 1);
+    INSERT INTO user_account (user_name, pass)
+	VALUES (user_id, MD5(CONCAT(nationl_code,fcn, fcln)));
+END
+
+
+
+
+
+
+####################################to_test
+call InsertUserToAccountTable(9212001, 'mohsen - Eslami', '2744740129');

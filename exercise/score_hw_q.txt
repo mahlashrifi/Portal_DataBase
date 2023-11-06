@@ -1,0 +1,23 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `score_hw_q`( 
+     IN course_id    integer,
+	 IN hw_id        integer,
+     IN q_num        integer,
+     IN student_no   integer, 
+     IN mark         integer)
+BEGIN
+	declare flag integer;
+    set flag = (select portal.specify_role(user_id, course_id));
+    
+	IF ( flag = 0) THEN
+		    SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'Course does not exist!';
+            
+    elseIF (falg = 3 or flag = 4) THEN
+		    SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'You do not have permision to rate the exercise'; 
+            
+    else
+		update hw_answer ha
+        set ha.mark = mark;
+    end if;    
+END

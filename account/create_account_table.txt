@@ -1,0 +1,17 @@
+use portal;
+CREATE TABLE iF NOT EXISTS user_account (
+  user_name     varchar(50),
+  pass   		varchar(50),
+  enter_time    datetime,
+  exit_time     datetime,
+  PRIMARY key(user_name)
+);
+
+
+
+#############################################for_test
+select * from user_account;
+DELETE FROM user_account;
+call InsertUserToAccountTable(9212001, 'mohsen - Eslami', '2744740129');
+ALTER TABLE user_account
+ADD logged_in integer;

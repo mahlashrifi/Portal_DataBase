@@ -1,0 +1,24 @@
+CREATE DEFINER=`root`@`localhost` FUNCTION `change_password`(user_name integer, pass varchar(50)) RETURNS int
+    DETERMINISTIC
+BEGIN
+
+	IF CHAR_LENGTH(pass) < 8 or CHAR_LENGTH(pass) >20  THEN
+		
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'Invalid password! Password length must be between 8 and 20 characters';
+			return 0;    
+		
+	ELSEif (NOT pass REGEXP '\w*[a-zA-Z]\w*') OR (NOT pass REGEXP '\w*[0-9]\w*') then
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'Invalid password! Password must have both numeric and alphabetic character';
+			return 0; 
+         
+    else
+		
+			update user_account u
+			set u.pass = MD5(pass)
+			where u.user_name = user_name;
+          
+	END IF;
+return 1;
+END

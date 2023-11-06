@@ -1,0 +1,7 @@
+UPDATE student s 
+SET s.email = CONCAT(LEFT(s.name_en, 1), ".", SUBSTRING_INDEX(s.name_en, ' - ', -1) ,"@aut.ac.ir");
+select * from student;
+
+UPDATE faculty f 
+SET f.email = CONCAT(LEshow_students_of_courseFT(f.name_en, 1), ".", SUBSTRING_INDEX(f.name_en, ' - ', -1) ,"@aut.ac.ir");
+select * from faculty

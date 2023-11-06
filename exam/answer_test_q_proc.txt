@@ -1,0 +1,36 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `answer_test_q`(
+	 IN course_id    integer,
+     IN test_id      integer,
+     IN q_num        integer,
+     IN stu_no       integer,
+     IN ans          integer, 
+     OUT proc_status integer
+)
+BEGIN
+	DECLARE passed_time, legal_time integer;
+    DECLARE end_time datetime;
+	set passed_time = MINUTE(now() - (select max(pst.start_t) from participation_start_time pst
+		where pst.course_id = course_id and pst.test_id = test_id and pst.student_no = stu_no));
+        
+	set legal_time = (select max(tf.time_period) from test_info tf 
+		where tf.course_id = course_id and tf.test_id = test_id);
+        
+	set end_time = ( select max(tf.end_time) from test_info tf 
+		where tf.course_id = course_id and tf.test_id = test_id);
+    
+	IF (now() > end_time) then
+			SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'The test is closed (the time to end the test has passed)!';
+            set proc_status = 0;
+            
+    elseIF (passed_time > legal_time) then
+			SIGNAL SQLSTATE '45000' 
+			SET MESSAGE_TEXT = 'The legal time of the test is over for you!';
+            set proc_status = 0; 
+    else
+			INSERT INTO test_answer(course_id, test_id, q_num, student_no, ans)
+			VALUES (course_id, test_id, q_num, stu_no, ans);
+            set proc_status = 1; 
+            
+    end if;        
+END

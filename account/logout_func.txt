@@ -1,0 +1,9 @@
+CREATE DEFINER=`root`@`localhost` FUNCTION `logout`(user_name varchar(50)) RETURNS int
+    DETERMINISTIC
+BEGIN
+	update user_account 
+        set exit_time = now(), logged_in = 0
+        WHERE user_account.user_name = user_name;
+	
+	RETURN 1;
+END
